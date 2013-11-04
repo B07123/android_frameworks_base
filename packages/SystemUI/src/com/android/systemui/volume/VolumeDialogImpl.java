@@ -511,6 +511,11 @@ public class VolumeDialogImpl implements VolumeDialog,
                     addRow(AudioManager.STREAM_NOTIFICATION, R.drawable.ic_volume_notification,
                             R.drawable.ic_volume_notification_mute, true, false);
                 }
+                    addRow(AudioManager.STREAM_RING, R.drawable.ic_volume_notification,
+                            R.drawable.ic_volume_notification_mute, true, false);
+                }
+                addRow(AudioManager.STREAM_RING,
+                        R.drawable.ic_volume_ringer, R.drawable.ic_volume_ringer_mute, true, false);
                 addRow(STREAM_ALARM,
                         R.drawable.ic_alarm, R.drawable.ic_volume_alarm_mute, true, false);
                 addRow(AudioManager.STREAM_VOICE_CALL,
@@ -1709,6 +1714,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mRows.remove(volumeRow);
         mDialogRowsView.removeView(volumeRow.view);
         mConfigurableTexts.remove(volumeRow.header);
+        mDialogRowsView.removeView(row.view);
     }
 
     protected void onStateChangedH(State state) {
@@ -1778,6 +1784,12 @@ public class VolumeDialogImpl implements VolumeDialog,
                     R.drawable.ic_volume_notification_mute, true, false);
             mDialogRowsView.addView(notificationRow.view, mDialogRowsView.indexOfChild(alarm.view));
             mRows.add(notificationRow);
+        VolumeRow notificationRow = findRow(AudioManager.STREAM_NOTIFICATION);
+        if (notificationRow != null && mState.linkedNotification) {
+            removeRow(notificationRow);
+        } else if (notificationRow == null && !mState.linkedNotification) {
+            addRow(AudioManager.STREAM_NOTIFICATION, R.drawable.ic_volume_notification,
+                    R.drawable.ic_volume_notification_mute, true, false);
         }
     }
 
@@ -1796,6 +1808,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         final boolean isAlarmStream = row.stream == STREAM_ALARM;
         final boolean isMusicStream = row.stream == AudioManager.STREAM_MUSIC;
         final boolean isNotificationStream = row.stream == STREAM_NOTIFICATION;
+        final boolean isNotificationStream = row.stream == AudioManager.STREAM_NOTIFICATION;
         final boolean isVibrate = mState.ringerModeInternal == AudioManager.RINGER_MODE_VIBRATE;
         final boolean isRingVibrate = isRingStream && isVibrate;
         final boolean isRingSilent = isRingStream

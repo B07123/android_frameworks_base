@@ -3113,7 +3113,10 @@ public final class Settings {
 
             // At one time in System, then Global, but now back in Secure
             MOVED_TO_SECURE.add(Secure.INSTALL_NON_MARKET_APPS);
+<<<<<<< HEAD
 
+=======
+>>>>>>> a36e6be7751... fw/b: Minor unlinked ring & notification volumes code fixup
             MOVED_TO_SECURE.add(Secure.VOLUME_LINK_NOTIFICATION);
         }
 

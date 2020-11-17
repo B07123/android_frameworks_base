@@ -263,6 +263,8 @@ public class VolumeDialogImpl implements VolumeDialog,
     private SettingsObserver settingsObserver;
     private ViewStub mBluetoothTooltipViewStub;
     private View mBluetoothTooltipView = null;
+    //private ViewStub mBluetoothTooltipViewStub;
+    //private View mBluetoothTooltipView = null;
 
     public VolumeDialogImpl(Context context) {
         mContext =
@@ -392,6 +394,33 @@ public class VolumeDialogImpl implements VolumeDialog,
         isExpandedImmediatelyOn = com.android.systemui.DescendantSystemUIUtils.settingStatusBoolean("expand_immediately", mContext);
         mDialogView.setAlpha(0);
         mDialog.setCanceledOnTouchOutside(true);
+        mMain = mDialogView.findViewById(R.id.main);
+        //mBluetoothTooltipViewStub = mDialog.findViewById(R.id.bt_battery_tooltip_stub);
+        //mBluetoothTooltipView = mBluetoothTooltipViewStub.inflate();
+        //mBluetoothTooltipView.setVisibility(View.GONE);
+        //mBluetoothBatteryReceiver = new BluetoothBatteryReceiver(mContext);
+
+        isExpandedImmediatelyOn = com.android.systemui.DescendantSystemUIUtils.settingStatusBoolean("expand_immediately", mContext);
+        mDialogView.setAlpha(0);
+        mDialog.setCanceledOnTouchOutside(true);
+        mExpandImmediately = mDialog.findViewById(R.id.volume_expand_immediately);
+        mExpandImmediatelyIcon = mExpandImmediately.findViewById(R.id.icon_expand_immediately);
+        if (isVolumeRockerLeft()) {
+            LinearLayout ll = mDialog.findViewById(R.id.volume_expand_immediately);
+            ll.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+            if (mExpandImmediatelyIcon != null) {
+                mExpandImmediatelyIcon.setRotation(180);
+            }
+        }
+       if (mExpandImmediatelyIcon != null) {
+        mExpandImmediatelyIcon.setOnClickListener(v -> {
+                isAllRowsVisible = true;
+                directlyCalled = true;
+                updateRowsH(getActiveRow());
+        });
+        expandImmediatelyAnim(true);
+        }
+        //showBluetoothBatteryTooltip();
         mDialog.setOnShowListener(dialog -> {
             if (!isLandscape()) {
                 mDialogView.setTranslationX(
@@ -1360,6 +1389,11 @@ public class VolumeDialogImpl implements VolumeDialog,
         if (mLocalMediaManager != null) {
             mLocalMediaManager.stopScan();
         }
+        Events.writeEvent(Events.EVENT_DISMISS_DIALOG, reason);
+        mediaRingCase = false;
+        //hideBluetoothBatteryTooltip();
+        expandImmediatelyAnim(false);
+        // Avoid multiple animation calls on touch spams.
         if (!mShowing) {
             // This may happen when dismissing an expanded panel, don't animate again
             return;
@@ -2547,7 +2581,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mDialog.getWindow().setAttributes(attributes);
     }
 
-    public void setBtTooltipParams() {
+    /*public void setBtTooltipParams() {
         if (mBluetoothTooltipViewStub == null) return;
         if (isVolumeRockerLeft()) {
             RelativeLayout rl = mDialog.findViewById(R.id.volume_bt_rl);
@@ -2562,7 +2596,7 @@ public class VolumeDialogImpl implements VolumeDialog,
             rl.requestLayout();
             rl.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
         }
-    }
+    }*/
 
     private int countVisibleRows() {
         int count = 0;

@@ -1317,6 +1317,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mController.notifyVisible(true);
         mController.getCaptionsComponentState(false);
         checkODICaptionsTooltip(false);
+        if (countVisibleRows() > 1) getActiveRow().icon.setVisibility(View.VISIBLE);
         isEpilepticUser = false;
     }
 
@@ -2324,7 +2325,7 @@ public class VolumeDialogImpl implements VolumeDialog,
         mRingerIcon.setClickable(true);
         mExtendOutputs.setClickable(true);
         //dynamically set width
-        setDialogWidth(true, mRowWidth * countVisibleRows()/*4*/);
+        setDialogWidth(true, mRowWidth * countVisibleRows()/*4*/);//cazzo
         //define animators
         ObjectAnimator animationODI = ObjectAnimator.ofFloat(mODICaptionsView, "translationX", translationCalc(calcTrans(countVisibleRows(), "odi")));
         ObjectAnimator animationRinger = ObjectAnimator.ofFloat(mRinger, "translationX", translationCalc(calcTrans(countVisibleRows(), "ringer")));
@@ -2596,4 +2597,8 @@ public class VolumeDialogImpl implements VolumeDialog,
         return (float) factor * nrRowf * operand;
     }
 
+        float factor = component == "ringer" ? (float) 66.25 : (float) 56.25;
+        float nrRowf = (float) nrRow;
+        return (float) factor * nrRowf * -1;
+    }
 }
